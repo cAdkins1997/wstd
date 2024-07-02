@@ -44,30 +44,33 @@ struct vec3 {
 
     template<typename T>
     struct vec2 {
-        T components[2];
+        T x, y;
 
-        T operator [] (const char index) const { return components[index]; }
-
-        vec3<T> operator + (const vec3<T> u) {
-            return vec3<T> { u[0] + this[0], u[1] + this[1] };
+        vec3<T> operator + (const vec3<T> v) {
+            return vec3<T> { x + v.x, y + v.y };
         }
 
-        vec3<T> operator - (const vec3<T> u) {
-            return vec3<T> { this[0] - u[0], this[1] - u[1] };
+        vec3<T> operator - (const vec3<T> v) {
+            return vec3<T> { x - v.x, y - v.y };
         }
 
         vec3<T> operator * (const size_t scalar) {
-            return vec3<T> { this[0] * scalar, this[1] * scalar };
+            return vec3<T> { x * scalar, y * scalar };
         }
 
         vec3<T> operator / (const size_t scalar) {
-            return vec3<T> { this[0] / scalar, this[1] / scalar };
+            return vec3<T> { x / scalar, y / scalar };
         }
     };
 
     template<typename T>
+    std::ostream& operator << (std::ostream& ostream, const vec2<T> u) {
+        return ostream << "X: " << u.x << " Y: " << u.y;
+    }
+
+    template<typename T>
     T dot(const vec2<T>& u, const vec2<T>& v) {
-        return (u[0] * v[0]) + (u[1] * v[1]);
+        return (u.x * v.y) + (u.x * v.y);
     }
 
     template<typename T>

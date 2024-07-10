@@ -18,9 +18,13 @@ int main() {
     linkedlist<linkedlist<int>> parent;
     for (int i = 0; i < 4; i++) {
         linkedlist<int> child;
-                                for (int j = 0; j < 4; j++) {
+        for (int j = 0; j < 4; j++) {
             child.append(i + j);
         }
         parent.append(child);
     }
+
+    for (int i = 0; i < 4; i++) {
+        std::cout << parent[i];
     }
+}

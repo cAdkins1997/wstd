@@ -14,15 +14,38 @@ namespace wstd {
             Node<T>* nextNode = nullptr;
             Node<T>* previousNode = nullptr;
 
-            explicit Node(T&& newData) : data(std::move(newData)) {}
-            Node(T&& newData, Node<T>* next) : data(std::move(newData)), nextNode(next) {}
-            Node(T&& newData, Node<T>* next, Node<T>* previous) : data(std::move(newData)), nextNode(next), previousNode(previous){}
             Node(Node<T>& other) : data(other.data), nextNode(other.nextNode), previousNode(other.previousNode) {
                 std::cout << "node copy constructor\n";
             }
 
-            Node(const Node<T>&& other) noexcept : data(std::move(other.data)), nextNode(other.nextNode), previousNode(other.previousNode) {
-                std::cout << "array list move constructor\n";
+            Node(Node<T>&& other)  noexcept : data(std::move(other.data)) {
+                nextNode = other.nextNode;
+                previousNode = other.previousNode;
+
+                other.nextNode = nullptr;
+                other.previousNode = nullptr;
+
+                std::cout << "node move copy constructor";
+            }
+
+            Node& operator = (Node<T>& other) {
+                data = other.data;
+                nextNode = other.nextNode;
+                previousNode = other.previousNode;
+                std::cout << "node copy assignment operator";
+                return *this;
+            }
+
+            Node& operator = (Node<T>&& other) noexcept {
+                data = std::move(other.data);
+                nextNode = other.nextNode;
+                previousNode = other.previousNode;
+
+                other.nextNode = nullptr;
+                other.previousNode = nullptr;
+
+                std::cout << "node move assignment operator";
+                return *this;
             }
         };
     }
@@ -47,13 +70,46 @@ namespace wstd {
         }
 
         explicit linkedlist(const arraylist<T>&& other)  noexcept : size(other.size) {
-            head = other.head;
-            other.head = nullptr;
-            tail = other.tail;
+            head = static_cast<arraylist<T>&&>(other.head);
+            tail = static_cast<arraylist<T>&&>(other.tail);
+            other.size = static_cast<arraylist<T>&&>(0);
+
             other.tail = nullptr;
-            size = other.size;
+            other.head = nullptr;
             other.size = 0;
+
             std::cout << "linked list move constructor\n";
+        }
+
+        linkedlist<T>& operator = (linkedlist<T>& other) {
+
+            if (other.head != nullptr) {
+                head = other.head;
+                Node<T>* currentNode = head;
+                while(currentNode->nextNode != nullptr) {
+                    append(currentNode->data);
+                }
+                append(tail->data);
+            }
+
+            std::cout << "linked list copy assignment operator\n";
+
+            return *this;
+        }
+
+        linkedlist<T>& operator = (linkedlist<T>&& other) noexcept {
+
+            head = std::move(other.head);
+            tail = std::move(other.tail);
+            other.size = std::move(other.size);
+
+            other.tail = nullptr;
+            other.head = nullptr;
+            other.size = 0;
+
+            std::cout << "linked list move assignment operator\n";
+
+            return *this;
         }
 
         ~linkedlist() {
@@ -64,7 +120,7 @@ namespace wstd {
                     Node<T>* previousNode = currentNode;
                     currentNode = currentNode->nextNode;
                     previousNode->data.~T();
-                    ::operator delete(previousNode);
+                            ::operator delete(previousNode);
                 }
 
                 tail->data.~T();
@@ -74,18 +130,24 @@ namespace wstd {
 
         void append(T&& newData) {
             if (head == nullptr) {
-                auto* newNode =  static_cast<Node<T>*>(::operator new (sizeof(Node<T>)));
+                auto* newNode = static_cast<Node<T>*>(::operator new (sizeof(Node<T>)));
                 newNode->data = std::move(newData);
                 head = newNode;
             }
             else if (tail == nullptr) {
-                Node<T>* newNode = new Node { std::move(newData), head, head };
+                auto* newNode = static_cast<Node<T>*>(::operator new (sizeof(Node<T>)));
+                newNode->data = std::move(newData);
+                newNode->nextNode = head;
+                newNode->previousNode = head;
                 head->nextNode = newNode;
                 head->previousNode = newNode;
                 tail = newNode;
             }
             else {
-                Node<T>* newNode = new Node { std::move(newData), head, tail };
+                auto* newNode = static_cast<Node<T>*>(::operator new (sizeof(Node<T>)));
+                newNode->data = std::move(newData);
+                newNode->nextNode = head;
+                newNode->previousNode = tail;
                 tail->nextNode = newNode;
                 tail = newNode;
             }
@@ -94,18 +156,24 @@ namespace wstd {
 
         void append(T& newData) {
             if (head == nullptr) {
-                auto* newNode =  static_cast<Node<T>*>(::operator new (sizeof(Node<T>)));
+                auto* newNode = static_cast<Node<T>*>(::operator new (sizeof(Node<T>)));
                 newNode->data = std::move(newData);
                 head = newNode;
             }
             else if (tail == nullptr) {
-                Node<T>* newNode = new Node { std::move(newData), head, head };
+                auto* newNode = static_cast<Node<T>*>(::operator new (sizeof(Node<T>)));
+                newNode->data = std::move(newData);
+                newNode->nextNode = head;
+                newNode->previousNode = head;
                 head->nextNode = newNode;
                 head->previousNode = newNode;
                 tail = newNode;
             }
             else {
-                Node<T>* newNode = new Node { std::move(newData), head, tail };
+                auto* newNode = static_cast<Node<T>*>(::operator new (sizeof(Node<T>)));
+                newNode->data = std::move(newData);
+                newNode->nextNode = head;
+                newNode->previousNode = tail;
                 tail->nextNode = newNode;
                 tail = newNode;
             }

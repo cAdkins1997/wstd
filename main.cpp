@@ -15,16 +15,26 @@
 using namespace wstd;
 
 int main() {
-    linkedlist<linkedlist<int>> parent;
-    for (int i = 0; i < 4; i++) {
-        linkedlist<int> child;
-        for (int j = 0; j < 4; j++) {
-            child.append(i + j);
+    arraylist<linkedlist<vec3<float>>> parent(10);
+    for (int i = 0; i < 10; i++) {
+        linkedlist<vec3<float>> child;
+        for (int j = 0; j < 10; j++) {
+            vec3<float> u(
+                randomf(10.0f, 0.0f),
+                randomf(10.0f, 0.0f),
+                randomf(10.0f, 0.0f)
+            );
+
+            child.append(u);
         }
-        parent.append(child);
+
+        parent.push_back(child);
     }
 
-    for (int i = 0; i < 4; i++) {
-        std::cout << parent[i];
+    for (int i = 0; i < 10; i++) {
+        for (int j = 0; i < 10; i++) {
+            const vec3<float> u = parent[i][j];
+            std::cout << u << '\n';
+        }
     }
 }

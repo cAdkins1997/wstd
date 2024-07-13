@@ -10,6 +10,29 @@ namespace wstd {
 struct vec3 {
         T x, y, z;
 
+        vec3(const T _x, const T _y, const T _z) : x(_x), y(_y), z(_z) {};
+        explicit vec3(const T _s) : x(_s), y(_s), z(_s) {};
+        vec3(const vec3<T>& other) : x(other.x), y(other.y), z(other.z) {};
+        vec3(const vec3<T>&& other)  noexcept : x(std::move(other.x)), y(std::move(other.y)), z(std::move(other.z)) {};
+
+        vec3<T>& operator = (const vec3<T>& other) {
+            x = other.x;
+            y = other.y;
+            z = other.z;
+            return *this;
+        }
+
+        vec3<T>& operator = (vec3<T>&& other)  noexcept {
+            x = std::move(other.x);
+            y = std::move(other.y);
+            z = std::move(other.z);
+
+            other.x = 0;
+            other.y = 0;
+            other.z = 0;
+            return *this;
+        }
+
         vec3<T> operator + (const vec3<T> v) {
             return vec3<T> { x + v.x, y + v.y, z+ v.z };
         }

@@ -21,14 +21,13 @@ namespace wstd {
             Node(Node<T>&& other)  noexcept : data(std::move(other.data)) {
                 nextNode = other.nextNode;
                 previousNode = other.previousNode;
-
                 other.nextNode = nullptr;
                 other.previousNode = nullptr;
 
                 std::cout << "node move copy constructor";
             }
 
-            Node& operator = (Node<T>& other) {
+            Node& operator = (const Node<T>& other) {
                 data = other.data;
                 nextNode = other.nextNode;
                 previousNode = other.previousNode;
@@ -76,12 +75,11 @@ namespace wstd {
 
             other.tail = nullptr;
             other.head = nullptr;
-            other.size = 0;
 
             std::cout << "linked list move constructor\n";
         }
 
-        linkedlist<T>& operator = (linkedlist<T>& other) {
+        linkedlist<T>& operator = (const linkedlist<T>& other) {
 
             if (other.head != nullptr) {
                 head = other.head;
@@ -92,6 +90,8 @@ namespace wstd {
                 append(tail->data);
             }
 
+            size = other.size;
+
             std::cout << "linked list copy assignment operator\n";
 
             return *this;
@@ -101,11 +101,10 @@ namespace wstd {
 
             head = std::move(other.head);
             tail = std::move(other.tail);
-            other.size = std::move(other.size);
+            size = std::move(other.size);
 
             other.tail = nullptr;
             other.head = nullptr;
-            other.size = 0;
 
             std::cout << "linked list move assignment operator\n";
 

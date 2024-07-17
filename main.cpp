@@ -6,6 +6,7 @@
 #include "datastructures/arraylist.h"
 #include "math/random.h"
 #include "math/vectors.h"
+#include "math/matrix.h"
 
 #include "datastructures/linkedlist.h"
 #include "math/functions.h"
@@ -13,28 +14,22 @@
 #include "string/string.h"
 
 using namespace wstd;
+using namespace std::chrono;
 
 int main() {
-    arraylist<linkedlist<vec3<float>>> parent(10);
-    for (int i = 0; i < 10; i++) {
-        linkedlist<vec3<float>> child;
-        for (int j = 0; j < 10; j++) {
-            vec3<float> u(
-                randomf(10.0f, 0.0f),
-                randomf(10.0f, 0.0f),
-                randomf(10.0f, 0.0f)
-            );
-
-            child.append(u);
+    arraylist<linkedlist<int>> array(2);
+    for (int i = 0; i < 4; i++) {
+        linkedlist<int> list;
+        for (int j = 0; j < 4; j++) {
+            list.append(i);
         }
-
-        parent.push_back(child);
+        array.push_back(list);
     }
 
-    for (int i = 0; i < 10; i++) {
-        for (int j = 0; i < 10; i++) {
-            const vec3<float> u = parent[i][j];
-            std::cout << u << '\n';
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            int number = array[i][j];
+            std::cout << number << '\n';
         }
     }
 }

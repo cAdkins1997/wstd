@@ -48,27 +48,38 @@ class arraylist {
             for (size_t i = 0; i < capacity; i++) {
                 array[i].~T();
             }
+
+            ::operator delete[](array);
         }
 
         [[nodiscard]] size_t get_size() const { return size; }
 
-        void resize(const size_t newCapacity) {
-            T* newArray = static_cast<T*>(::operator new [](newCapacity * sizeof(T)));
-            capacity = newCapacity;
+            void resize(const size_t newCapacity) {
+                T* newArray = static_cast<T*>(::operator new [](newCapacity * sizeof(T)));
+                capacity = newCapacity;
 
-            for (size_t i = 0; i < capacity; i++) {
-                newArray[i] = std::move(array[i]);
-                array[i].~T();
+                for (size_t i = 0; i < capacity; i++) {
+                    newArray[i] = std::move(array[i]);
+                    array[i].~T();
+                }
+
+                ::operator delete [](array);
+
+                array = newArray;
             }
-
-            delete [] array;
-
-            array = newArray;
-        }
 
         void push_back(T& newData) {
             if (size >= capacity) {
-                resize(capacity + capacity / 2);
+                resize(capacity + capacity);
+            }
+
+            array[size] = std::move(newData);
+            size++;
+        }
+
+        void push_back(T&& newData) {
+            if (size >= capacity) {
+                resize(capacity + capacity);
             }
 
             array[size] = std::move(newData);

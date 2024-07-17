@@ -48,6 +48,12 @@ struct vec3 {
         vec3<T> operator / (const size_t scalar) {
             return vec3<T> { x / scalar, y / scalar, z / scalar };
         }
+
+        std::string to_string() {
+            std::string string;
+            string.append("x: " + std::to_string(x) + "y: " + std::to_string(y) + "z: " + std::to_string(z));
+            return string;
+        }
     };
 
     template<typename T>
@@ -57,7 +63,7 @@ struct vec3 {
 
     template<typename T>
     T dot(const vec3<T>& u, const vec3<T>& v) {
-        return (u[0] * v[0]) + (u[1] * v[1]) + (u[2] * v[2]);
+        return (u.x * v.x) + (u.y * v.y) + (u.z * v.z);
     }
 
     template<typename T>

@@ -2,68 +2,128 @@
 #ifndef STRING_H
 #define STRING_H
 
+#include <cassert>
 #include <ostream>
 
 namespace wstd {
+    inline size_t strlen(const char* str) {
+        size_t length = 0;
+        while(*str != '\0') {
+            str++;
+            length++;
+        }
+        return length;
+    }
+
+    inline void strcpy(const char* src, char* dst) {
+        const size_t srcSize = wstd::strlen(src);
+        for (size_t i = 0; i < srcSize; i++) {
+            dst[i] = src[i];
+        }
+    }
+
+    class string;
+    size_t strlen(const wstd::string& str);
 
     class string {
     public:
-        explicit string(const char* _data) : size(sizeof(_data)), capacity(sizeof(_data)) {
-            data = new char[sizeof(_data)];
-            for (size_t i = 0; i < size; i++) {
-                data[i] = _data[i];
-            }
+
+        string() = default;
+
+        string(const char* _str) {
+            size = strlen(_str);
+            str = new char[size + 1];
+            wstd::strcpy(_str, str);
         }
 
         ~string() {
-            delete [] data;
+            delete [] str;
         }
 
-        void append(const char* newString) {
-            const size_t newSize = size + sizeof(newString);
-            if (newSize >= capacity) {
-                resize(newSize + capacity / 2);
-            }
-
-            for (size_t i = size; i < newSize; i++) {
-                data[i] = newString[i];
-                size++;
-            }
-
+        void resize(const size_t newSize) {
+            const auto newString = new char[newSize + 1];
             size = newSize;
+            strcpy(str, newString);
+
+            delete [] str;
+            str = newString;
         }
 
-        void resize(const size_t newCapacity) {
-            auto newData = new char[newCapacity * sizeof(char)];
-            capacity = newCapacity;
+        void append(const char* newData) {
+            const size_t oldSize = size;
 
-            for (size_t i = 0; i < capacity; i++) {
-                newData[i] = data[i];
+            if (strlen(newData) + size >= size) {
+                resize(strlen(newData) + size);
             }
 
-            delete [] data;
+            for (size_t i = oldSize; i < size; i++) {
+                str[i] = newData[i - oldSize];
+            }
+        }
 
-            data = newData;
+        void append(const wstd::string& newData) {
+            const size_t oldSize = size;
+
+            if (strlen(newData) + size >= size) {
+                resize(strlen(newData) + size);
+            }
+
+            for (size_t i = oldSize; i < size; i++) {
+                str[i] = newData[i - oldSize];
+            }
+        }
+
+        [[nodiscard]] size_t get_size() const {
+            return size;
+        }
+
+        [[nodiscard]] const char* get_string() const {
+            return str;
         }
 
         char& operator [] (const size_t index) const {
-            return data[index];
+            assert(str != nullptr);
+            return str[index];
         }
 
-        [[nodiscard]] size_t get_size() const { return size; }
-
-        [[nodiscard]] char* get_string() const { return data; }
+        string& operator = (const char* _str) {
+            wstd::strcpy(_str, str);
+            return *this;
+        }
 
     private:
-        char* data{};
         size_t size{};
-        size_t capacity{};
+        char* str{};
     };
 
-    inline std::ostream& operator << (std::ostream& ostream, const string& str) {
-        return ostream << str.get_string();
+    inline std::ostream& operator << (std::ostream& ostream, const wstd::string& str) {
+        ostream << str.get_string();
+        return ostream;
     }
 
+    inline const char* operator + (const wstd::string& left, const wstd::string& right) {
+        wstd::string string;
+        string.append(left.get_string());
+        string.append(right.get_string());
+        return string.get_string();
+    }
+
+    inline const char* operator + (const wstd::string& string, const char* str) {
+        wstd::string ret = string.get_string();
+        ret.append(str);
+        return ret.get_string();
+    }
+
+    inline size_t strlen(const wstd::string& str) {
+        return str.get_size();
+    }
+
+    inline void strcpy(const wstd::string& src, const wstd::string& dst) {
+        const size_t srcSize = src.get_size();
+        for (size_t i = 0; i < srcSize; i++) {
+            dst[i] = src[i];
+        }
+    }
 }
 
 #endif //STRING_H

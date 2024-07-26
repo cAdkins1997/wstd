@@ -3,6 +3,8 @@
 #define LINKEDLIST_H
 
 #include <cassert>
+#include <memory>
+#include <iostream>
 #include <cstdlib>
 
 namespace wstd {
@@ -55,7 +57,7 @@ namespace wstd {
     public:
         linkedlist() = default;
 
-        explicit linkedlist(const arraylist<T>& other) : size(other.size) {
+        linkedlist(const linkedlist<T>& other) : size(other.size) {
             if (other.head != nullptr) {
                 head = other.head;
                 Node<T>* currentNode = head;
@@ -68,10 +70,10 @@ namespace wstd {
             std::cout << "linked list copy constructor\n";
         }
 
-        explicit linkedlist(const arraylist<T>&& other)  noexcept : size(other.size) {
-            head = static_cast<arraylist<T>&&>(other.head);
-            tail = static_cast<arraylist<T>&&>(other.tail);
-            other.size = static_cast<arraylist<T>&&>(0);
+        linkedlist(const linkedlist<T>&& other)  noexcept : size(other.size) {
+            head = static_cast<linkedlist<T>&&>(other.head);
+            tail = static_cast<linkedlist<T>&&>(other.tail);
+            other.size = static_cast<linkedlist<T>&&>(0);
 
             other.tail = nullptr;
             other.head = nullptr;

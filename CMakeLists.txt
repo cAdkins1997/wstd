@@ -14,4 +14,7 @@ add_executable(Cpp main.cpp
         IO/io.cpp
         math/random.h
         string/string.h
-        math/matrix.h)
+        math/matrix.h
+        functional.h
+        datastructures/queue.h
+        datastructures/orderedmap.h)
